@@ -21,7 +21,7 @@ productApiClient.registerMethod("getProductInfo", productApiUrl, "GET");
 
 
 var getProduct = function (inProductId,callback) {
-	console.log('id:' + inProductId);
+	console.log('inProductId:' + inProductId);
 	args.path.productId=inProductId;
 	var product = { productId : inProductId ,productName : 'NA'};
 	console.log('productApiClient.methods.getProductInfo'+util.inspect(productApiClient.methods.getProductInfo,false,null));
