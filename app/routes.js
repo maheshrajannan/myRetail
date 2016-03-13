@@ -47,6 +47,7 @@ module.exports = function(app) {
 	//TODO: delete this if this does not work.
 	app.post('/api/products', function(req, res) {
 		// create a priceInfo, information comes from AJAX request from Angular
+		console.log('Posting' + req.body.productId);
 		PriceInfo.create({
 			value : req.body.value,
 			currencyCode : req.body.currencyCode,
@@ -55,6 +56,7 @@ module.exports = function(app) {
 		}, function(err, priceInfo) {
 			if (err)
 				res.send(err);
+			res.json(priceInfo);
 		});
 	});
 
