@@ -61,19 +61,25 @@ module.exports = function(app) {
 	});
 
 	// create priceInfo and send back all priceInfos after creation
+	//TODO: INFO ideal way to do CRUD is on the domain object itself..
+	//Not the parent object
 	app.put('/api/products', function(req, res) {
-		//TODO: use a better logger.
-		console.log(req);
-
-		PriceInfo.findOneAndUpdate({ priceInfoId: req.body.priceInfoId },
-		 { 
-		 	currencyCode: req.body.currencyCode,
-		 	value: req.body.value
-		  }, 
-		 function(err, priceInfo) {
-		  if (err) throw err;
-		  console.log('updated priceInfo ' + priceInfo);
-		});
+		if(!util.isNullOrUndefined(req.body.id)) {
+			console.log('priceInfo ' + util.inspect(req.body.id,false,null));
+			PriceInfo.findOneAndUpdate(
+				{ productId: req.body.id,currencyCode: req.body.currencyCode },
+				{ 
+				 	value: req.body.value
+				 },
+				 {upsert:true}, 
+				 function(err, priceInfo) {
+				 	if (err) throw err;
+				 	console.log('updated priceInfo ' + priceInfo);
+					getProduct(res,req.body.id);		
+				});
+		} else {
+			res.json();
+		}
 	});	
 
 	// delete a priceInfo
