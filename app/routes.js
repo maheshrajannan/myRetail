@@ -17,15 +17,22 @@ function getProduct(res,inProductId){
 		//TODO: change to productPriceInfo
 		//var product = {id:inProductId,name:product.productName,priceInfo:priceInfo};
 		//TODO: null check on productId
-		PriceInfo.find(
-			{productId:inProductId},
-			function(err, foundPriceInfos) {
-				if (err)
-					res.send(err)
-				console.log('foundPriceInfo ' + util.inspect(foundPriceInfos,false,null));
-				product = {id:inProductId,name:product.productName,priceInfos:foundPriceInfos};
-				res.json(product);
-			});
+		if(!util.isNullOrUndefined(product)) {
+			PriceInfo.find(
+				{productId:inProductId},
+				function(err, foundPriceInfos) {
+					if (err)
+						res.send(err)
+					console.log('foundPriceInfo ' + util.inspect(foundPriceInfos,false,null));
+					product = {id:inProductId,name:product.productName,priceInfos:foundPriceInfos};
+					res.json(product);
+				});
+		} else {
+			//TODO: return correct response code.
+			console.log('unable to find product#'+inProductId);
+			res.json();
+		}
+
 	});
 
 };
