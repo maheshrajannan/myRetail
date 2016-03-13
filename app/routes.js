@@ -4,20 +4,18 @@ var ProductApiClient = require('./productApiClient');
 
 function getProduct(res,inProductId){
 	console.log('getProduct inProductId:' + inProductId);
-
-
 	//TODO: add not null function.
 	//TODO: check in.
 	//TODO: format nicely.
 	//TODO: unit testing.
 	//TODO: callback mayhem for each price info, call forEachCallback, 
 	//TODO: add the authentication param
-	var priceProductInfo;
+	var product;
 	ProductApiClient.getProduct(inProductId,function(product) {
 		console.log('getProduct updating product' + util.inspect(product,false,null));
 		//Example response: {"id":13860428,"name":"The Big Lebowski (Blu-ray) (Widescreen)","current_price":{"value": 13.49,"currency_code":"USD"}}
 		//TODO: change to productPriceInfo
-		//var priceProductInfo = {id:inProductId,name:product.productName,priceInfo:priceInfo};
+		//var product = {id:inProductId,name:product.productName,priceInfo:priceInfo};
 		//TODO: null check on productId
 		PriceInfo.find(
 			{productId:inProductId},
@@ -25,8 +23,8 @@ function getProduct(res,inProductId){
 				if (err)
 					res.send(err)
 				console.log('foundPriceInfo ' + util.inspect(foundPriceInfos,false,null));
-				priceProductInfo = {id:inProductId,name:product.productName,priceInfos:foundPriceInfos};
-				res.json(priceProductInfo);
+				product = {id:inProductId,name:product.productName,priceInfos:foundPriceInfos};
+				res.json(product);
 			});
 	});
 
@@ -44,7 +42,7 @@ module.exports = function(app) {
 	});
 
 	// create priceInfo and send back all priceInfos after creation
-	//TODO: delete this if this does not work.
+	//TODO: delete this after creating enough test data.
 	app.post('/api/products', function(req, res) {
 		// create a priceInfo, information comes from AJAX request from Angular
 		console.log('Posting' + req.body.productId);
@@ -74,8 +72,6 @@ module.exports = function(app) {
 		  if (err) throw err;
 		  console.log('updated priceInfo ' + priceInfo);
 		});
-		getPriceInfos(res);
-
 	});	
 
 	// delete a priceInfo
