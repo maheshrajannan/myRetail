@@ -2,7 +2,8 @@ var PriceInfo = require('./models/priceInfo');
 var util = require('util');
 var ProductApiClient = require('./productApiClient');
  
-function getPriceInfos(res){
+ //TODO: delete this method, too much maintanence on something which is not asked for .
+function getProducts(res){
 	PriceInfo.find(function(err, priceInfos) {
 
 			var priceProductInfos =[];
@@ -17,6 +18,8 @@ function getPriceInfos(res){
 			//TODO: format nicely.
 			//TODO: unit testing.
 			//TODO: callback mayhem for each price info, call forEachCallback, 
+			//INFO: ideally should get the list of products and add price info to it, since the product API does not have
+			// getProducts, getting the price infos and adding product information to it.
 			priceInfos.forEach(function(priceInfo) {
 				var product;
 				ProductApiClient.getProduct(priceInfo.productId,function(outProduct) {
@@ -63,6 +66,7 @@ function getProduct(res,inProductId){
 			//TODO: format nicely.
 			//TODO: unit testing.
 			//TODO: callback mayhem for each price info, call forEachCallback, 
+			//TODO: add the authentication param
 				var product;
 				ProductApiClient.getProduct(priceInfo.productId,function(outProduct) {
 					product = outProduct;
@@ -100,7 +104,7 @@ module.exports = function(app) {
 	
 	app.get('/api/products', function(req, res) {
 		// use mongoose to get all priceInfos in the database
-		getPriceInfos(res);
+		getProducts(res);
 	});
 	
 
