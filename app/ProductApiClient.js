@@ -31,13 +31,8 @@ var getProduct = function (inProductId,callback) {
 			productApiClient.methods.getProductInfo(args, function (data, response) {
 				if(!util.isNullOrUndefined(data) && !util.isNullOrUndefined(data.product_composite_response.items[0].online_description)) {
 					product = { productId : inProductId ,productName : 'NA'};
-					// parsed response body as js object 
-					//TODO null checks on each
+					// INFO: data is parsed response body as js object 
 					//TODO: make the field to read as configurable
-					//console.log('response'+util.inspect(data.product_composite_response.request_attributes));
-					//console.log('data'+util.inspect(data,false,null));
-					//console.log('data.product_composite_response'+util.inspect(data.product_composite_response,false,null));
-					//console.log('data.product_composite_response.items'+util.inspect(data.product_composite_response.items));
 					product.productName = data.product_composite_response.items[0].online_description.value;
 					//TODO: replace with better logger.
 					console.log('id:' + inProductId + 'data from productAPI' + util.inspect(data.product_composite_response.items[0].online_description,false,null));
@@ -45,9 +40,11 @@ var getProduct = function (inProductId,callback) {
 					//console.log('raw response from product api' + response);
 					return callback(product);
 				} else {
+					console.log('data'+util.inspect(data,false,null));
 					return callback(product);
 				}	
 				//TODO: handle error call back.
+				//TODO: return correct response code.
 			});
 	} else {
 		return callback(product);

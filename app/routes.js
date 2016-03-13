@@ -4,27 +4,22 @@ var ProductApiClient = require('./productApiClient');
 
 function getProduct(res,inProductId){
 	console.log('getProduct inProductId:' + inProductId);
-	//TODO: add not null function.
-	//TODO: check in.
 	//TODO: format nicely.
 	//TODO: unit testing.
 	//TODO: callback mayhem for each price info, call forEachCallback, 
 	//TODO: add the authentication param
 	var product;
-	ProductApiClient.getProduct(inProductId,function(product) {
-		console.log('getProduct updating product' + util.inspect(product,false,null));
+	ProductApiClient.getProduct(inProductId,function(foundProduct) {
+		console.log('getProduct updating product' + util.inspect(foundProduct,false,null));
 		//Example response: {"id":13860428,"name":"The Big Lebowski (Blu-ray) (Widescreen)","current_price":{"value": 13.49,"currency_code":"USD"}}
-		//TODO: change to productPriceInfo
-		//var product = {id:inProductId,name:product.productName,priceInfo:priceInfo};
-		//TODO: null check on productId
-		if(!util.isNullOrUndefined(product)) {
+		if(!util.isNullOrUndefined(foundProduct)) {
 			PriceInfo.find(
 				{productId:inProductId},
 				function(err, foundPriceInfos) {
 					if (err)
 						res.send(err)
 					console.log('foundPriceInfo ' + util.inspect(foundPriceInfos,false,null));
-					product = {id:inProductId,name:product.productName,priceInfos:foundPriceInfos};
+					product = {id:inProductId,name:foundProduct.productName,priceInfos:foundPriceInfos};
 					res.json(product);
 				});
 		} else {
@@ -94,7 +89,6 @@ module.exports = function(app) {
 	});
 
 	//TODO: remove the front end.
-	//TODO: check in.
 	// application -------------------------------------------------------------
 	app.get('*', function(req, res) {
 		res.sendfile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
