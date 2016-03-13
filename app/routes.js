@@ -87,7 +87,7 @@ module.exports = function(app) {
 
 	// api ---------------------------------------------------------------------
 	// get all priceInfos
-	app.get('/api/priceInfos/:priceInfoId', function(req, res) {
+	app.get('/api/products/:priceInfoId', function(req, res) {
 		console.log('getPriceInfo:' + req.params.priceInfoId);
 		// use mongoose to get all priceInfos in the database
 		getPriceInfo(res,req.params.priceInfoId);
@@ -96,14 +96,14 @@ module.exports = function(app) {
 	// api ---------------------------------------------------------------------
 	// get one priceInfo
 	
-	app.get('/api/priceInfos', function(req, res) {
+	app.get('/api/products', function(req, res) {
 		// use mongoose to get all priceInfos in the database
 		getPriceInfos(res);
 	});
 	
 
 	// create priceInfo and send back all priceInfos after creation
-	app.post('/api/priceInfos', function(req, res) {
+	app.post('/api/products', function(req, res) {
 		// create a priceInfo, information comes from AJAX request from Angular
 		PriceInfo.create({
 			value : req.body.value,
@@ -120,7 +120,7 @@ module.exports = function(app) {
 	});
 
 	// create priceInfo and send back all priceInfos after creation
-	app.put('/api/priceInfos', function(req, res) {
+	app.put('/api/products', function(req, res) {
 
 		//TODO: use a better logger.
 
@@ -140,7 +140,7 @@ module.exports = function(app) {
 	});	
 
 	// delete a priceInfo
-	app.delete('/api/priceInfos/:priceInfoId', function(req, res) {
+	app.delete('/api/products/:priceInfoId', function(req, res) {
 		PriceInfo.remove({
 			priceInfoId : req.params.priceInfoId
 		}, function(err, priceInfo) {
