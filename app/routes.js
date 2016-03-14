@@ -2,7 +2,6 @@ var PriceInfo = require('./models/priceInfo');
 var util = require('util');
 var ProductApiClient = require('./productApiClient');
 
-//INFO:
 function getProduct(res,inProductId,inKey){
 	console.log('getProduct inProductId:' + inProductId);
 	console.log('getProduct inKey:' + inKey);
@@ -10,7 +9,7 @@ function getProduct(res,inProductId,inKey){
 	//TODO: format nicely.
 	//TODO: unit testing.
 	//TODO: callback mayhem for each price info, call forEachCallback, 
-	//TODO: add the authentication param
+	//DONE: add the authentication param
 	var product;
 	ProductApiClient.getProduct(inProductId,inKey,function(foundProduct) {
 		console.log('getProduct updating product' + util.inspect(foundProduct,false,null));
@@ -35,13 +34,39 @@ function getProduct(res,inProductId,inKey){
 		}
 
 	});
+};
 
+function verifyProduct(inProductId,inKey,callback){
+	console.log('getProduct inProductId:' + inProductId);
+	console.log('getProduct inKey:' + inKey);
+
+	//TODO: format nicely.
+	//TODO: unit testing.
+	//TODO: callback mayhem for each price info, call forEachCallback, 
+	//DONE: add the authentication param
+	var product;
+	ProductApiClient.getProduct(inProductId,inKey,function(foundProduct) {
+		console.log('getProduct updating product' + util.inspect(foundProduct,false,null));
+		//Example response: {"id":13860428,"name":"The Big Lebowski (Blu-ray) (Widescreen)","current_price":{"value": 13.49,"currency_code":"USD"}}
+		if(!util.isNullOrUndefined(foundProduct)) {
+			PriceInfo.find(
+				{productId:inProductId},
+				function(err, foundPriceInfos) {
+					if (err)
+						res.send(err)
+					console.log('foundPriceInfo ' + util.inspect(foundPriceInfos,false,null));
+					product = {id:inProductId,name:foundProduct.productName,priceInfos:foundPriceInfos};
+					callback(product);
+				});
+		} else {
+			callback(product);
+		}
+
+	});
 };
 
 module.exports = function(app) {
 
-	// api ---------------------------------------------------------------------
-	// get all priceInfos
 	//DONE: return the correct response code if product is not found.
 	app.get('/api/products/:productId', function(req, res) {
 		console.log('getProduct:' + req.params.productId);
@@ -72,22 +97,45 @@ module.exports = function(app) {
 	//Not the parent object
 	app.put('/api/products', function(req, res) {
 		if(!util.isNullOrUndefined(req.body.id)) {
-			console.log('priceInfo ' + util.inspect(req.body.id,false,null));
-			PriceInfo.findOneAndUpdate(
-				{ productId: req.body.id,currencyCode: req.body.currencyCode },
-				{ 
-				 	value: req.body.value
-				 },
-				 {upsert:true}, 
-				 function(err, priceInfo) {
-				 	if (err) throw err;
-				 	console.log('updated priceInfo ' + priceInfo);
-					getProduct(res,req.body.id);		
-				});
+			verifyProduct(req.body.id,req.body.key,function(productFound) {
+				if(!util.isNullOrUndefined(productFound)) {
+				console.log('productId ' + util.inspect(req.body.id,false,null));
+				PriceInfo.findOneAndUpdate(
+					{ productId: req.body.id,currencyCode: req.body.currencyCode },
+					{ 
+					 	value: req.body.value
+					 },
+					 //INFO: requirement says update the product price, so upsert is false.
+					 //if need to do insert also use post on price info directly and implement it.
+					 {
+					 	upsert:false,
+					 	setDefaultsOnInsert: true
+					 }, 
+					 function(err, priceInfo) {
+					 	if (err) throw err;
+						console.log('updated priceInfo ' + priceInfo);
+						if(!util.isNullOrUndefined(priceInfo)) {
+							//INFO: fetch from table again, for the product because only then we get the
+							//actual result of update.
+							getProduct(res,req.body.id,req.body.key);					 
+						} else {
+							//INFO: basically for the given product if a price for the currency code is found then update it.
+							//INFO: if not found it is considered as an error for PUT, use POST on price info.
+							res.status(404)        // HTTP status 404: NotFound
+				   			.send('For productId#'+req.body.id+' Not found Currency Code ' + req.body.currencyCode);	
+						}
+					});
+				} else{
+					res.status(404)        // HTTP status 404: NotFound
+		   			.send('productId#'+req.body.id+' Not found');	
+				} 
+			});
 		} else {
-			res.json();
-		}
-	});	
+			res.status(404)        // HTTP status 404: NotFound
+	   		.send('productId#'+req.body.id+' Not found or invalid');		
+   		}
+   	}
+	);	
 
 	// delete a priceInfo
 	//TODO: delete this. This does not follow REST standards and codes.

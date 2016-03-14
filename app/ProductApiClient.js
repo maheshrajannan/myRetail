@@ -21,14 +21,14 @@ var getProduct = function (inProductId,inKey,callback) {
 
 		args.path.productId=inProductId;
 		// registering remote methods 
-		productApiClient.registerMethod("getProductInfo", productApiUrl, "GET");
+		productApiClient.registerMethod("getProduct", productApiUrl, "GET");
 		
 		//TODO: use proper logging module.
-		console.log('productApiClient.methods.getProductInfo'+util.inspect(productApiClient.methods.getProductInfo,false,null));
+		console.log('productApiClient.methods.getProduct'+util.inspect(productApiClient.methods.getProduct,false,null));
 		//DONE:move this to a separate file
 
 		//productApiClient.get(productApiUrl, function (data, response) {
-			productApiClient.methods.getProductInfo(args, function (data, response) {
+			productApiClient.methods.getProduct(args, function (data, response) {
 				//TODO: move this to a separate file.
 				console.log('data'+util.inspect(data,false,null));
 				if(!util.isNullOrUndefined(data) && 
