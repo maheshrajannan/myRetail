@@ -4,16 +4,15 @@
 var Client = require('node-rest-client').Client;
 var productApiClient = new Client();
 //var productApiUrl = 'https://api.target.com/products/v3/13860428?fields=descriptions&id_type=TCIN&key=43cJWpLjH8Z8oR18KdrZDBKAgLLQKJjz';
-var productApiUrl = 'https://api.target.com/products/v3/${productId}?fields=descriptions&id_type=TCIN&key=43cJWpLjH8Z8oR18KdrZDBKAgLLQKJjz';
+var productApiUrl = 'https://api.target.com/products/v3/${productId}';
 var util = require('util');
 
 //TODO: move this to properties ?
 var args = {
 	path: { "productId": 1 }, // path substitution var 
 	//TODO: if you have time parameterize this.
-	parameters: {  } // query parameter substitution vars 
+	parameters: { fields : "descriptions", id_type : "TCIN" , key : "43cJWpLjH8Z8oR18KdrZDBKAgLLQKJjz" } // query parameter substitution vars 
 };
-
 
 // registering remote methods 
 productApiClient.registerMethod("getProductInfo", productApiUrl, "GET");
@@ -29,6 +28,7 @@ var getProduct = function (inProductId,callback) {
 		//DONE:move this to a separate file
 		//productApiClient.get(productApiUrl, function (data, response) {
 			productApiClient.methods.getProductInfo(args, function (data, response) {
+				console.log('data'+util.inspect(data,false,null));
 				if(!util.isNullOrUndefined(data) && !util.isNullOrUndefined(data.product_composite_response.items[0].online_description)) {
 					product = { productId : inProductId ,productName : 'NA'};
 					// INFO: data is parsed response body as js object 
