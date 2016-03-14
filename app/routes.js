@@ -40,7 +40,7 @@ module.exports = function(app) {
 
 	// api ---------------------------------------------------------------------
 	// get all priceInfos
-	//TODO: return the correct response code if product is not found.
+	//DONE: return the correct response code if product is not found.
 	app.get('/api/products/:productId', function(req, res) {
 		console.log('getProduct:' + req.params.productId);
 		// use mongoose to get all priceInfos in the database

@@ -3,7 +3,6 @@
 
 var util = require('util');
 
-
 var getProduct = function (inProductId,callback) {
 	var product;
 	console.log('inProductId:' + inProductId);
@@ -11,7 +10,6 @@ var getProduct = function (inProductId,callback) {
 		//TODO: there is some threading problem with this API, so initializing this every time and using closure .
 		var productApiUrl = 'https://api.target.com/products/v3/${productId}';
 
-		//TODO: move this to properties ?
 		var args = {
 			path: { "productId": 1 }, // path substitution var 
 			//TODO: if you have time parameterize this.
@@ -24,7 +22,7 @@ var getProduct = function (inProductId,callback) {
 		// registering remote methods 
 		productApiClient.registerMethod("getProductInfo", productApiUrl, "GET");
 		
-		//console.log('data'+util.inspect(args));
+		//TODO: use proper logging module.
 		console.log('productApiClient.methods.getProductInfo'+util.inspect(productApiClient.methods.getProductInfo,false,null));
 		//DONE:move this to a separate file
 		//productApiClient.get(productApiUrl, function (data, response) {

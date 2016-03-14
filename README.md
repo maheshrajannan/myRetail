@@ -13,7 +13,8 @@ Node provides the RESTful API. Angular provides the frontend and accesses the AP
 1. Clone the repository: 
 2. Install the application: `npm install`
 3. Start the server: `node server.js`
-4. View in browser at `http://localhost:8080`
+4. Service deployed at `http://localhost:8080`
+5. use rest client of choice and do get and put.
 
 
 http://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api
