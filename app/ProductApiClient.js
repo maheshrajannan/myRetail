@@ -3,12 +3,15 @@
 
 var util = require('util');
 
-var getProduct = function (inProductId,callback) {
+var getProduct = function (inProductId,inKey,callback) {
 	var product;
 	console.log('inProductId:' + inProductId);
-	if(!util.isNullOrUndefined(inProductId)) {
+	console.log('inKey:' + inKey);
+	if(!util.isNullOrUndefined(inProductId) && !util.isNullOrUndefined(inKey)) {
 		//TODO: there is some threading problem with this API, so initializing this every time and using closure .
 		var productApiUrl = 'https://api.target.com/products/v3/${productId}';
+		var Client = require('node-rest-client').Client;
+		var productApiClient = new Client();
 
 		var args = {
 			path: { "productId": 1 }, // path substitution var 
@@ -16,8 +19,6 @@ var getProduct = function (inProductId,callback) {
 			parameters: { fields : "descriptions", id_type : "TCIN" , key : "43cJWpLjH8Z8oR18KdrZDBKAgLLQKJjz" } // query parameter substitution vars 
 		};
 
-		var Client = require('node-rest-client').Client;
-		var productApiClient = new Client();
 		args.path.productId=inProductId;
 		// registering remote methods 
 		productApiClient.registerMethod("getProductInfo", productApiUrl, "GET");
@@ -25,6 +26,7 @@ var getProduct = function (inProductId,callback) {
 		//TODO: use proper logging module.
 		console.log('productApiClient.methods.getProductInfo'+util.inspect(productApiClient.methods.getProductInfo,false,null));
 		//DONE:move this to a separate file
+
 		//productApiClient.get(productApiUrl, function (data, response) {
 			productApiClient.methods.getProductInfo(args, function (data, response) {
 				//TODO: move this to a separate file.

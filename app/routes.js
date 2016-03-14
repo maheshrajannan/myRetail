@@ -3,14 +3,16 @@ var util = require('util');
 var ProductApiClient = require('./productApiClient');
 
 //INFO:
-function getProduct(res,inProductId){
+function getProduct(res,inProductId,inKey){
 	console.log('getProduct inProductId:' + inProductId);
+	console.log('getProduct inKey:' + inKey);
+
 	//TODO: format nicely.
 	//TODO: unit testing.
 	//TODO: callback mayhem for each price info, call forEachCallback, 
 	//TODO: add the authentication param
 	var product;
-	ProductApiClient.getProduct(inProductId,function(foundProduct) {
+	ProductApiClient.getProduct(inProductId,inKey,function(foundProduct) {
 		console.log('getProduct updating product' + util.inspect(foundProduct,false,null));
 		//Example response: {"id":13860428,"name":"The Big Lebowski (Blu-ray) (Widescreen)","current_price":{"value": 13.49,"currency_code":"USD"}}
 		if(!util.isNullOrUndefined(foundProduct)) {
@@ -43,8 +45,9 @@ module.exports = function(app) {
 	//DONE: return the correct response code if product is not found.
 	app.get('/api/products/:productId', function(req, res) {
 		console.log('getProduct:' + req.params.productId);
+		console.log('getKey:' + req.query.key);
 		// use mongoose to get all priceInfos in the database
-		getProduct(res,req.params.productId);
+		getProduct(res,req.params.productId,req.query.key);
 	});
 
 	// create priceInfo and send back all priceInfos after creation
