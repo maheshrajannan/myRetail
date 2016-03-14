@@ -2,6 +2,7 @@ var PriceInfo = require('./models/priceInfo');
 var util = require('util');
 var ProductApiClient = require('./productApiClient');
 
+//INFO:
 function getProduct(res,inProductId){
 	console.log('getProduct inProductId:' + inProductId);
 	//TODO: format nicely.
@@ -24,8 +25,11 @@ function getProduct(res,inProductId){
 				});
 		} else {
 			//TODO: return correct response code.
+			//INFO: http://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api
+			//404 Not Found - When a non-existent resource is requested
 			console.log('unable to find product#'+inProductId);
-			res.json();
+			res.status(404)        // HTTP status 404: NotFound
+   			.send('productId#'+inProductId+'Not found');
 		}
 
 	});
@@ -44,7 +48,7 @@ module.exports = function(app) {
 	});
 
 	// create priceInfo and send back all priceInfos after creation
-	//TODO: delete this after creating enough test data.
+	//TODO: delete this after creating enough test data.This does not follow REST standards and status codes.
 	app.post('/api/products', function(req, res) {
 		// create a priceInfo, information comes from AJAX request from Angular
 		console.log('Posting' + req.body.productId);
@@ -83,6 +87,7 @@ module.exports = function(app) {
 	});	
 
 	// delete a priceInfo
+	//TODO: delete this. This does not follow REST standards and codes.
 	app.delete('/api/products/:priceInfoId', function(req, res) {
 		PriceInfo.remove({
 			priceInfoId : req.params.priceInfoId
