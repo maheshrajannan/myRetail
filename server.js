@@ -8,6 +8,17 @@ var database = require('./config/database'); 			// load the database config
 var morgan   = require('morgan');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
+var fs = require('fs');
+
+
+var hskey = fs.readFileSync('/Users/maheshrajannan/Samples/Workspaces/nodeJs/ReportingProject/SSLAcadia/server.key');
+var hscert = fs.readFileSync('/Users/maheshrajannan/Samples/Workspaces/nodeJs/ReportingProject/SSLAcadia/server.crt');
+var options = {
+    key: hskey,
+    cert: hscert
+};
+
+var https = require('https');
 
 // configuration ===============================================================
 mongoose.connect(database.url); 	// connect to mongoDB database on modulus.io
@@ -26,5 +37,15 @@ app.use(methodOverride('X-HTTP-Method-Override')); // override with the X-HTTP-M
 require('./app/routes.js')(app);
 
 // listen (start app with node server.js) ======================================
-app.listen(port);
-console.log("App listening on port " + port);
+//app.listen(port);
+
+/**
+ * Create HTTP server.
+ */
+
+var server = https.createServer(options,app);
+//TODO: on error ? on listening ?
+
+server.listen(port, function(){
+  console.log('https web server listening on port '+port);
+});

@@ -12,6 +12,8 @@
     "body-parser"     : "~1.4.3",
     "method-override" : "~2.1.1",
     "node-rest-client": "*",
-    "util" :"*"
+    "util" :"*",
+    "fs" : "*",
+    "https" :"*"
   }
 }
